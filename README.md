@@ -59,31 +59,25 @@ An AI-powered voice agent that converts speech to text and enables intelligent v
 
 ---
 
-## Sprint 4 🚧 In Progress
+## Sprint 4 🚧
 
-### Goals
+### Goal:
+Make the AI Voice Agent respond naturally instead of only returning a status.
 
-* End-to-end integration
-* Testing and optimization
-* Deployment preparation
+### Completed:
 
-### Current Progress
+Added response generation in the backend
+Enhanced FastAPI endpoint to return status and message
+Implemented conversation flow handling
+Added agent response display in the frontend
+Integrated browser Text-to-Speech (TTS)
+Enabled voice feedback loop
 
-* Integrating frontend and backend
-* Improving transcription accuracy
-* Bug fixes and performance tuning
+#### Example:
 
----
+User: "Yes, I already took it"
 
-## Project Structure
-
-```text
-ai_voice_agent/
-├── frontend/
-├── backend/
-├── README.md
-└── .gitignore
-```
+Agent: "Thank you. I have recorded that you took your medication."
 
 ## Future Enhancements
 
