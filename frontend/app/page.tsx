@@ -8,6 +8,7 @@ import SpeechRecognition, {
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [status, setStatus] = useState("");
+  const [agentMessage,setAgentMessage] = useState("");
 
   const {
     transcript,
@@ -45,8 +46,12 @@ export default function Home() {
       );
 
       const data = await response.json();
-
       setStatus(data.status);
+      setAgentMessage(data.message);
+      const speech = new SpeechSynthesisUtterance(
+        data.message);
+      window.speechSynthesis.speak(speech);
+
     } catch (error) {
       console.error("Analyze Error:", error);
       setStatus("SERVER ERROR");
@@ -134,6 +139,13 @@ export default function Home() {
         </h2>
 
         <p>{status}</p>
+      </div>
+      <div className="mt-6 border p-4 rounded">
+        <h2 className="font-bold">
+      Agent Response
+        </h2>
+
+      <p>{agentMessage}</p>
       </div>
     </div>
   );

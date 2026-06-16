@@ -24,6 +24,7 @@ def analyze(data: dict):
     transcript = data.get("transcript", "").lower()
 
     status = "UNKNOWN"
+    message="Sorry, i didn't understand your response"
 
     if (
         "yes" in transcript
@@ -32,6 +33,8 @@ def analyze(data: dict):
         or "completed" in transcript
     ):
         status = "TAKEN"
+        message = ("Thank you  for the response "
+                   "i record your medication. ")
 
     elif (
         "no" in transcript
@@ -40,11 +43,15 @@ def analyze(data: dict):
         or "forgot" in transcript
     ):
         status = "PENDING"
+        message=("Thank you for the response"
+                 "i will remind you later.")
 
     print("Transcript:", transcript)
     print("Status:", status)
+    print("message:",message)
 
     return {
         "transcript": transcript,
-        "status": status
+        "status": status,
+        "message":message
     } 
