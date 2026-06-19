@@ -1,6 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from models import (
+    AnalyzeRequest,
+    AnalyzeResponse,
+)
+
+from ai_classifier import (
+    classify_medication_response,
+)
+
 app = FastAPI()
 
 app.add_middleware(
@@ -11,47 +20,44 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 def root():
-    return {"message": "Voice Agent Backend Running"}
-
-@app.post("/analyze")
-def analyze(data: dict):
-
-    print("========== NEW REQUEST ==========")
-    print("Request Body:", data)
-
-    transcript = data.get("transcript", "").lower()
-
-    status = "UNKNOWN"
-    message="Sorry, i didn't understand your response"
-
-    if (
-        "yes" in transcript
-        or "taken" in transcript
-        or "already" in transcript
-        or "completed" in transcript
-    ):
-        status = "TAKEN"
-        message = ("Thank you  for the response "
-                   "i record your medication. ")
-
-    elif (
-        "no" in transcript
-        or "not yet" in transcript
-        or "later" in transcript
-        or "forgot" in transcript
-    ):
-        status = "PENDING"
-        message=("Thank you for the response"
-                 "i will remind you later.")
-
-    print("Transcript:", transcript)
-    print("Status:", status)
-    print("message:",message)
-
     return {
-        "transcript": transcript,
-        "status": status,
-        "message":message
-    } 
+        "message": "Voice Agent Backend Running"
+    }
+
+
+@app.post(
+    "/analyze",
+    response_model=AnalyzeResponse
+)
+def analyze(
+    data: AnalyzeRequest
+):
+
+    print(
+        "\n========== NEW REQUEST =========="
+    )
+
+    transcript = data.transcript
+
+    print(
+        "Transcript:",
+        transcript
+    )
+
+    status, message = (
+        classify_medication_response(
+            transcript
+        )
+    )
+
+    print("Status:", status)
+    print("Message:", message)
+
+    return AnalyzeResponse(
+        transcript=transcript,
+        status=status,
+        message=message,
+    )
