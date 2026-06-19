@@ -59,7 +59,7 @@ An AI-powered voice agent that converts speech to text and enables intelligent v
 
 ---
 
-## Sprint 4 🚧
+## Sprint 4 ✅ Completed
 
 ### Goal:
 Make the AI Voice Agent respond naturally instead of only returning a status.
@@ -78,6 +78,23 @@ Enabled voice feedback loop
 User: "Yes, I already took it"
 
 Agent: "Thank you. I have recorded that you took your medication."
+
+## Sprint 5 ✅ Completed
+
+
+### Sprint 5 🚧
+
+**Goal:**
+Enable the voice agent to conduct a complete medication review session by asking about multiple medications sequentially.
+
+**Completed:**
+
+* Added support for multiple medications
+* Implemented sequential medication questioning
+* Stored medication responses during the session
+* Added medication results summary view
+* Automated progression to the next medication
+* Enhanced voice interaction flow
 
 ## Future Enhancements
 
