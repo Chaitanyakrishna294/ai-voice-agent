@@ -7,8 +7,25 @@ import SpeechRecognition, {
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+
   const [status, setStatus] = useState("");
-  const [agentMessage,setAgentMessage] = useState("");
+  const [agentMessage, setAgentMessage] = useState("");
+
+  const medications = [
+    "Metformin",
+    "Vitamin D",
+    "Aspirin",
+  ];
+
+  const [currentMedicationIndex, setCurrentMedicationIndex] =
+    useState(0);
+
+  const [results, setResults] = useState<
+    {
+      medication: string;
+      status: string;
+    }[]
+  >([]);
 
   const {
     transcript,
@@ -21,12 +38,17 @@ export default function Home() {
     setMounted(true);
   }, []);
 
-  const speak = () => {
-    const speech = new SpeechSynthesisUtterance(
-      "Have you taken your Metformin today?"
-    );
+  const speakCurrentMedication = () => {
+    const medication =
+      medications[currentMedicationIndex];
+
+    const speech =
+      new SpeechSynthesisUtterance(
+        `Have you taken ${medication} today?`
+      );
 
     speech.lang = "en-US";
+
     window.speechSynthesis.speak(speech);
   };
 
@@ -46,14 +68,55 @@ export default function Home() {
       );
 
       const data = await response.json();
+
       setStatus(data.status);
       setAgentMessage(data.message);
-      const speech = new SpeechSynthesisUtterance(
-        data.message);
-      window.speechSynthesis.speak(speech);
 
+      setResults((prev) => [
+        ...prev,
+        {
+          medication:
+            medications[currentMedicationIndex],
+          status: data.status,
+        },
+      ]);
+
+      const responseSpeech =
+        new SpeechSynthesisUtterance(
+          data.message
+        );
+
+      window.speechSynthesis.speak(
+        responseSpeech
+      );
+
+      setTimeout(() => {
+        if (
+          currentMedicationIndex <
+          medications.length - 1
+        ) {
+          const nextIndex =
+            currentMedicationIndex + 1;
+
+          setCurrentMedicationIndex(
+            nextIndex
+          );
+
+          const nextMedication =
+            medications[nextIndex];
+
+          const nextQuestion =
+            new SpeechSynthesisUtterance(
+              `Have you taken ${nextMedication} today?`
+            );
+
+          window.speechSynthesis.speak(
+            nextQuestion
+          );
+        }
+      }, 2500);
     } catch (error) {
-      console.error("Analyze Error:", error);
+      console.error(error);
       setStatus("SERVER ERROR");
     }
   };
@@ -74,9 +137,23 @@ export default function Home() {
         Re-MIND-eЯ Voice Agent
       </h1>
 
+      <div className="mb-6">
+        <h2 className="font-bold">
+          Current Medication
+        </h2>
+
+        <p>
+          {
+            medications[
+              currentMedicationIndex
+            ]
+          }
+        </p>
+      </div>
+
       <div className="space-x-2">
         <button
-          onClick={speak}
+          onClick={speakCurrentMedication}
           className="bg-blue-500 text-white px-4 py-2 rounded"
         >
           Ask Question
@@ -118,15 +195,8 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="mt-6">
-        <p>
-          Status:{" "}
-          {listening ? "Listening..." : "Stopped"}
-        </p>
-      </div>
-
       <div className="mt-6 border p-4 rounded">
-        <h2 className="font-bold mb-2">
+        <h2 className="font-bold">
           Transcript
         </h2>
 
@@ -134,18 +204,37 @@ export default function Home() {
       </div>
 
       <div className="mt-6 border p-4 rounded">
-        <h2 className="font-bold mb-2">
+        <h2 className="font-bold">
           Medication Status
         </h2>
 
         <p>{status}</p>
       </div>
+
       <div className="mt-6 border p-4 rounded">
         <h2 className="font-bold">
-      Agent Response
+          Agent Response
         </h2>
 
-      <p>{agentMessage}</p>
+        <p>{agentMessage}</p>
+      </div>
+
+      <div className="mt-6 border p-4 rounded">
+        <h2 className="font-bold mb-2">
+          Medication Results
+        </h2>
+
+        {results.length === 0 ? (
+          <p>No responses yet</p>
+        ) : (
+          results.map((item, index) => (
+            <div key={index}>
+              {item.medication}
+              {" → "}
+              {item.status}
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
